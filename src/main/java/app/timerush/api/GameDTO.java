@@ -1,4 +1,4 @@
-package app.timerush.time_rush_backend;
+package app.timerush.api;
 
 public class GameDTO {
 

@@ -1,4 +1,4 @@
-package app.timerush.time_rush_backend;
+package app.timerush.api;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
