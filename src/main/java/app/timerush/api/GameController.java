@@ -41,7 +41,8 @@ public class GameController {
     public Game getGameByJoinCode(@PathVariable("joinCode") String joinCode) {
         return this.gameRepo.findByJoinCode(joinCode);
     }
-
+    
+    @CrossOrigin
     @PostMapping
     Game insertGame(@RequestBody GameDTO gameDto) {
         final Game game = this.modelMapper.map(gameDto, Game.class);
