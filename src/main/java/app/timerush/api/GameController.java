@@ -30,18 +30,19 @@ public class GameController {
     @CrossOrigin
     @GetMapping("")
     public List<Game> getAllGames(@RequestParam(required = false) String name) {
-        if (name==null) {
+        if (name == null) {
             return this.gameRepo.findAll();
         }
 
         return this.gameRepo.findByName(name);
     }
 
+    @CrossOrigin
     @GetMapping("/{joinCode}")
     public Game getGameByJoinCode(@PathVariable("joinCode") String joinCode) {
         return this.gameRepo.findByJoinCode(joinCode);
     }
-    
+
     @CrossOrigin
     @PostMapping
     Game insertGame(@RequestBody GameDTO gameDto) {
@@ -52,11 +53,12 @@ public class GameController {
         return this.gameRepo.save(game);
     }
 
+    @CrossOrigin
     @PutMapping
     Game updateGame(@RequestBody GameDTO gameDto) {
         final Game game = this.modelMapper.map(gameDto, Game.class);
 
         return this.gameRepo.save(game);
     }
-    
+
 }
