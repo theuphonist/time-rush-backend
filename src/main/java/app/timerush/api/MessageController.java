@@ -1,20 +1,23 @@
 package app.timerush.api;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 @Controller
 public class MessageController {
 
-    @MessageMapping("/message")
-    @SendTo("/game/notifications")
-    public Message greeting(Message message) throws Exception {
-        System.out.println(message);
-        Thread.sleep(1000); // simulated delay
-        final Message response = new Message();
-        response.setFrom("WebSocket Server");
-        response.setContent("Hello from the server!");
-        return response;
+    private SimpMessagingTemplate template;
+
+    @Autowired
+    public MessageController(SimpMessagingTemplate template) {
+        this.template = template;
+    }
+
+    @MessageMapping("/{gameId}")
+    public void relayToGameSubscribers(@DestinationVariable String gameId, Message message) throws Exception {
+        this.template.convertAndSend("/game/" + gameId, message);
     }
 }

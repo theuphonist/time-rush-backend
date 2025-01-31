@@ -22,12 +22,12 @@ public class TimeRushConfiguration implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(@NonNull MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/message");
-        config.setApplicationDestinationPrefixes("/app");
+        config.enableSimpleBroker("/game");
+        config.setApplicationDestinationPrefixes("/timerush");
     }
 
     @Override
     public void registerStompEndpoints(@NonNull StompEndpointRegistry registry) {
-        registry.addEndpoint("/websocket").setAllowedOrigins("*");
+        registry.addEndpoint("/messaging").setAllowedOrigins("*");
     }
 }
