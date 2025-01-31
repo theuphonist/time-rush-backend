@@ -11,9 +11,6 @@ public interface PlayerRepository extends MongoRepository<Player, String> {
     @NonNull
     List<Player> findAll();
 
-    @Query("{name:'?0'}")
-    List<Game> findByName(String name);
-
-    @Query("{joinCode:'?0'}")
-    Game findByJoinCode(String joinCode);
+    @Query("{gameId:'?0'}")
+    List<Player> findAllByGameId(String gameId);
 }

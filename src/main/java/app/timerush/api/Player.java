@@ -9,6 +9,8 @@ public class Player {
     private String id;
     private String name;
     private String color;
+    private String gameId;
+    private boolean isHost;
 
     public String getId() {
         return this.id;
@@ -22,6 +24,14 @@ public class Player {
         return this.color;
     }
 
+    public String getGameId() {
+        return this.gameId;
+    }
+
+    public boolean getIsHost() {
+        return this.isHost;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -32,5 +42,13 @@ public class Player {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public void setGameId(String gameId) {
+        this.gameId = gameId;
+    }
+
+    public void setIsHost(boolean isHost) {
+        this.isHost = isHost;
     }
 }

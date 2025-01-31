@@ -1,7 +1,5 @@
 package app.timerush.api;
 
-import java.util.List;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -12,8 +10,6 @@ public class Game {
     private String name;
     private int turnLength;
     private String turnLengthUnits;
-    private List<String> playerIds;
-    private String hostPlayerId;
     private String joinCode;
 
     public String getId() {
@@ -30,14 +26,6 @@ public class Game {
 
     public String getTurnLengthUnits() {
         return this.turnLengthUnits;
-    }
-
-    public List<String> getPlayerIds() {
-        return this.playerIds;
-    }
-
-    public String getHostPlayerId() {
-        return this.hostPlayerId;
     }
 
     public String getJoinCode() {
@@ -58,14 +46,6 @@ public class Game {
 
     public void setTurnLengthUnits(String turnLengthUnits) {
         this.turnLengthUnits = turnLengthUnits;
-    }
-
-    public void setPlayerIds(List<String> playerIds) {
-        this.playerIds = playerIds;
-    }
-
-    public void setHostPlayerId(String hostPlayerId) {
-        this.hostPlayerId = hostPlayerId;
     }
 
     public void setJoinCode(String joinCode) {
