@@ -11,6 +11,7 @@ public class Player {
     private String color;
     private String gameId;
     private boolean isHost;
+    private Integer position;
 
     public String getId() {
         return this.id;
@@ -32,6 +33,10 @@ public class Player {
         return this.isHost;
     }
 
+    public Integer getPosition() {
+        return this.position;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -50,5 +55,9 @@ public class Player {
 
     public void setIsHost(boolean isHost) {
         this.isHost = isHost;
+    }
+
+    public void setPosition(Integer position) {
+        this.position = position;
     }
 }
