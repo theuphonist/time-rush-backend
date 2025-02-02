@@ -1,5 +1,7 @@
 package app.timerush.api;
 
+import java.time.Instant;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -11,6 +13,7 @@ public class Game {
     private int turnLength;
     private String turnLengthUnits;
     private String joinCode;
+    private Instant createdAt;
 
     public String getId() {
         return this.id;
@@ -32,6 +35,10 @@ public class Game {
         return this.joinCode;
     }
 
+    public Instant getCreatedAt() {
+        return this.createdAt;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -50,5 +57,9 @@ public class Game {
 
     public void setJoinCode(String joinCode) {
         this.joinCode = joinCode;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
     }
 }

@@ -1,5 +1,7 @@
 package app.timerush.api;
 
+import java.time.Instant;
+
 public class PlayerDTO {
     private String id;
     private String name;
@@ -7,6 +9,7 @@ public class PlayerDTO {
     private String gameId;
     private boolean isHost;
     private Integer position;
+    private Instant createdAt;
 
     public String getId() {
         return this.id;
@@ -32,6 +35,10 @@ public class PlayerDTO {
         return this.position;
     }
 
+    public Instant getCreatedAt() {
+        return this.createdAt;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -54,5 +61,9 @@ public class PlayerDTO {
 
     public void setPosition(Integer position) {
         this.position = position;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
     }
 }

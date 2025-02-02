@@ -1,5 +1,6 @@
 package app.timerush.api;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,6 +38,9 @@ public class PlayerController {
     @PostMapping
     Player insertPlayer(@RequestBody PlayerDTO playerDTO) {
         final Player player = this.modelMapper.map(playerDTO, Player.class);
+
+        player.setCreatedAt(Instant.now());
+
         return this.playerRepo.save(player);
     }
 

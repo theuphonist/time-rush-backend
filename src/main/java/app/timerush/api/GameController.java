@@ -1,5 +1,7 @@
 package app.timerush.api;
 
+import java.time.Instant;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -36,6 +38,9 @@ public class GameController {
 
         final String joinCode = GameUtils.generateJoinCode(4);
         game.setJoinCode(joinCode);
+
+        game.setCreatedAt(Instant.now());
+
         return this.gameRepo.save(game);
     }
 

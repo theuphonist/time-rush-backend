@@ -1,12 +1,14 @@
 package app.timerush.api;
 
-public class GameDTO {
+import java.time.Instant;
 
+public class GameDTO {
     private String id;
     private String name;
     private int turnLength;
     private String turnLengthUnits;
     private String joinCode;
+    private Instant createdAt;
 
     public String getId() {
         return this.id;
@@ -28,6 +30,10 @@ public class GameDTO {
         return this.joinCode;
     }
 
+    public Instant getCreatedAt() {
+        return this.createdAt;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -46,5 +52,9 @@ public class GameDTO {
 
     public void setJoinCode(String joinCode) {
         this.joinCode = joinCode;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
     }
 }

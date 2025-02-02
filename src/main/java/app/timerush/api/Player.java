@@ -1,5 +1,7 @@
 package app.timerush.api;
 
+import java.time.Instant;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -12,6 +14,7 @@ public class Player {
     private String gameId;
     private boolean isHost;
     private Integer position;
+    private Instant createdAt;
 
     public String getId() {
         return this.id;
@@ -37,6 +40,10 @@ public class Player {
         return this.position;
     }
 
+    public Instant getCreatedAt() {
+        return this.createdAt;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -59,5 +66,9 @@ public class Player {
 
     public void setPosition(Integer position) {
         this.position = position;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
     }
 }
