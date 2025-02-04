@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,13 +20,29 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/player")
 public class PlayerController {
+    enum WebSocketAction {
+        UPDATE_PLAYER("updatePlayer");
+
+        private final String stringValue;
+
+        WebSocketAction(String stringValue) {
+            this.stringValue = stringValue;
+        }
+
+        String get() {
+            return this.stringValue;
+        }
+    }
+
     private final PlayerRepository playerRepo;
     private final ModelMapper modelMapper;
+    private final SimpMessagingTemplate template;
 
     @Autowired
-    public PlayerController(PlayerRepository playerRepo, ModelMapper modelMapper) {
+    public PlayerController(PlayerRepository playerRepo, ModelMapper modelMapper, SimpMessagingTemplate template) {
         this.playerRepo = playerRepo;
         this.modelMapper = modelMapper;
+        this.template = template;
     }
 
     @CrossOrigin
@@ -40,8 +57,13 @@ public class PlayerController {
         final Player player = this.modelMapper.map(playerDTO, Player.class);
 
         player.setCreatedAt(Instant.now());
+        player.setIsConnected(true);
 
-        return this.playerRepo.save(player);
+        final Player newPlayer = this.playerRepo.save(player);
+
+        MessageUtils.sendUpdatePlayerMessage(player.getGameId(), this.template);
+
+        return newPlayer;
     }
 
     @CrossOrigin
@@ -77,6 +99,9 @@ public class PlayerController {
             }
 
             this.playerRepo.save(player);
+
+            MessageUtils.sendUpdatePlayerMessage(player.getGameId(), this.template);
+
             return player;
         }
 
@@ -90,10 +115,27 @@ public class PlayerController {
 
         if (optionalPlayer.isPresent()) {
             Player player = optionalPlayer.get();
+
             this.playerRepo.deleteById(playerId);
+
+            if (player.getIsHost()) {
+                final List<Player> remainingPlayers = this.playerRepo.findAllByGameId(player.getGameId());
+
+                for (Player remainingPlayer : remainingPlayers) {
+                    if (!remainingPlayer.getIsHost()) {
+                        remainingPlayer.setIsHost(true);
+                        this.playerRepo.save(remainingPlayer);
+                        break;
+                    }
+                }
+            }
+
+            MessageUtils.sendUpdatePlayerMessage(player.getGameId(), this.template);
+
             return player;
         }
 
         return null;
     }
+
 }

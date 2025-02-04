@@ -22,7 +22,7 @@ public class TimeRushConfiguration implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(@NonNull MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/game");
+        config.enableSimpleBroker("/topic");
         config.setApplicationDestinationPrefixes("/timerush");
     }
 

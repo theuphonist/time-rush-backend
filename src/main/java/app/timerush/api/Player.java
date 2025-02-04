@@ -14,6 +14,7 @@ public class Player {
     private String gameId;
     private boolean isHost;
     private Integer position;
+    private boolean isConnected;
     private Instant createdAt;
 
     public String getId() {
@@ -38,6 +39,10 @@ public class Player {
 
     public Integer getPosition() {
         return this.position;
+    }
+
+    public boolean getIsConnected() {
+        return this.isConnected;
     }
 
     public Instant getCreatedAt() {
@@ -66,6 +71,10 @@ public class Player {
 
     public void setPosition(Integer position) {
         this.position = position;
+    }
+
+    public void setIsConnected(boolean isConnected) {
+        this.isConnected = isConnected;
     }
 
     public void setCreatedAt(Instant createdAt) {

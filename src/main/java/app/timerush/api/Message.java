@@ -1,31 +1,22 @@
 package app.timerush.api;
 
 public class Message {
-    private String from;
     private String action;
-    private Object data;
-
-    public String getFrom() {
-        return this.from;
-    }
+    private MessageData data;
 
     public String getAction() {
         return this.action;
     }
 
-    public Object getData() {
+    public MessageData getData() {
         return this.data;
-    }
-
-    public void setFrom(String from) {
-        this.from = from;
     }
 
     public void setAction(String action) {
         this.action = action;
     }
 
-    public void setData(Object data) {
+    public void setData(MessageData data) {
         this.data = data;
     }
 }
