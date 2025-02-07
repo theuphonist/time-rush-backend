@@ -59,6 +59,16 @@ public class PlayerController {
         player.setCreatedAt(Instant.now());
         player.setIsConnected(true);
 
+        final List<Player> otherPlayers = this.playerRepo.findAllByGameId(player.getGameId());
+
+        final boolean noHostPresent = otherPlayers.stream().filter(p -> p.getIsHost() && p.getIsConnected()).findFirst()
+                .isEmpty();
+
+        // make this player the host if there isn't one already
+        if (noHostPresent) {
+            player.setIsHost(true);
+        }
+
         final Player newPlayer = this.playerRepo.save(player);
 
         MessageUtils.sendUpdatePlayerMessage(player.getGameId(), this.template);
