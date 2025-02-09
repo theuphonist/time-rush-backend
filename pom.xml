@@ -12,7 +12,7 @@
 	<artifactId>time-rush-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>time-rush-backend</name>
-	<description>RESTful API for TimeRush app</description>
+	<description>RESTful API and WebSocket server for TimeRush app</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -22,12 +22,13 @@
 	</developers>
 	<scm>
 		<connection/>
-		<developerConnection/>
+		<developerConnection>${developer.connection}</developerConnection>
 		<tag/>
 		<url/>
 	</scm>
 	<properties>
 		<java.version>23</java.version>
+		<developer.connection>scm:git:https://github.com/theuphonist/time-rush-backend.git</developer.connection>
 	</properties>
 	<dependencies>
 		<dependency>
