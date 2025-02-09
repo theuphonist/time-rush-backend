@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>app.timerush</groupId>
 	<artifactId>time-rush-backend</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>time-rush-backend</name>
 	<description>RESTful API and WebSocket server for TimeRush app</description>
 	<url />
@@ -20,10 +20,10 @@
 		<developer />
 	</developers>
 	<scm>
-		<connection />
+		<connection></connection>
 		<developerConnection>${developer.connection}</developerConnection>
-		<tag>time-rush-backend-0.0.1</tag>
-		<url />
+		<tag></tag>
+		<url></url>
 	</scm>
 	<properties>
 		<java.version>23</java.version>
