@@ -7,8 +7,8 @@ public class PlayerDTO {
     private String name;
     private String color;
     private String gameId;
-    private boolean isHost;
     private Integer position;
+    private Boolean isConnected;
     private Instant createdAt;
 
     public String getId() {
@@ -27,12 +27,12 @@ public class PlayerDTO {
         return this.gameId;
     }
 
-    public boolean getIsHost() {
-        return this.isHost;
-    }
-
     public Integer getPosition() {
         return this.position;
+    }
+
+    public Boolean getIsConnected() {
+        return this.isConnected;
     }
 
     public Instant getCreatedAt() {
@@ -55,12 +55,12 @@ public class PlayerDTO {
         this.gameId = gameId;
     }
 
-    public void setIsHost(boolean isHost) {
-        this.isHost = isHost;
-    }
-
     public void setPosition(Integer position) {
         this.position = position;
+    }
+
+    public void setIsConnected(Boolean isConnected) {
+        this.isConnected = isConnected;
     }
 
     public void setCreatedAt(Instant createdAt) {

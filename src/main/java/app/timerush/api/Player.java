@@ -12,9 +12,8 @@ public class Player {
     private String name;
     private String color;
     private String gameId;
-    private boolean isHost;
     private Integer position;
-    private boolean isConnected;
+    private Boolean isConnected;
     private Instant createdAt;
 
     public String getId() {
@@ -33,15 +32,11 @@ public class Player {
         return this.gameId;
     }
 
-    public boolean getIsHost() {
-        return this.isHost;
-    }
-
     public Integer getPosition() {
         return this.position;
     }
 
-    public boolean getIsConnected() {
+    public Boolean getIsConnected() {
         return this.isConnected;
     }
 
@@ -65,15 +60,11 @@ public class Player {
         this.gameId = gameId;
     }
 
-    public void setIsHost(boolean isHost) {
-        this.isHost = isHost;
-    }
-
     public void setPosition(Integer position) {
         this.position = position;
     }
 
-    public void setIsConnected(boolean isConnected) {
+    public void setIsConnected(Boolean isConnected) {
         this.isConnected = isConnected;
     }
 

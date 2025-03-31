@@ -1,11 +1,14 @@
 package app.timerush.api;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,9 +29,21 @@ public class GameController {
     }
 
     @CrossOrigin
-    @GetMapping("")
-    public Game getGameByJoinCode(@RequestParam String joinCode) {
-        return this.gameRepo.findByJoinCode(joinCode);
+    @GetMapping
+    public List<Game> getAllGamesByJoinCode(@RequestParam String joinCode) {
+        return this.gameRepo.findAllByJoinCode(joinCode);
+    }
+
+    @CrossOrigin
+    @GetMapping("/{id}")
+    public Game getGameById(@PathVariable("id") String id) {
+        Optional<Game> optionalGame = this.gameRepo.findById(id);
+
+        if (optionalGame.isPresent()) {
+            return optionalGame.get();
+        }
+
+        return null;
     }
 
     @CrossOrigin
@@ -37,8 +52,9 @@ public class GameController {
         final Game game = this.modelMapper.map(gameDto, Game.class);
 
         final String joinCode = GameUtils.generateJoinCode(4);
-        game.setJoinCode(joinCode);
 
+        game.setJoinCode(joinCode);
+        game.setStatus(GameTypes.Pending);
         game.setCreatedAt(Instant.now());
 
         return this.gameRepo.save(game);
