@@ -1,15 +1,15 @@
-package app.timerush.api;
+package app.timerush.api.model;
 
 public class Message {
     private String action;
     private MessageData data;
 
     public String getAction() {
-        return this.action;
+        return action;
     }
 
     public MessageData getData() {
-        return this.data;
+        return data;
     }
 
     public void setAction(String action) {

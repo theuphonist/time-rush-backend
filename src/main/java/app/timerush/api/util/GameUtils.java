@@ -1,4 +1,4 @@
-package app.timerush.api;
+package app.timerush.api.util;
 
 import java.util.Random;
 

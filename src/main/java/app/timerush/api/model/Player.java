@@ -1,4 +1,4 @@
-package app.timerush.api;
+package app.timerush.api.model;
 
 import java.time.Instant;
 
@@ -13,7 +13,7 @@ public class Player {
     private String color;
     private String gameId;
     private Integer position;
-    private Boolean isConnected;
+    private String sessionId;
     private Instant createdAt;
 
     public String getId() {
@@ -36,8 +36,8 @@ public class Player {
         return this.position;
     }
 
-    public Boolean getIsConnected() {
-        return this.isConnected;
+    public String getSessionId() {
+        return sessionId;
     }
 
     public Instant getCreatedAt() {
@@ -64,8 +64,8 @@ public class Player {
         this.position = position;
     }
 
-    public void setIsConnected(Boolean isConnected) {
-        this.isConnected = isConnected;
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 
     public void setCreatedAt(Instant createdAt) {

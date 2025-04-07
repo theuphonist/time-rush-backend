@@ -1,13 +1,8 @@
-package app.timerush.api;
+package app.timerush.api.dto;
 
 import java.time.Instant;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-@Document("game")
-public class Game {
-    @Id
+public class GameDTO {
     private String id;
     private String name;
     private int turnLength;

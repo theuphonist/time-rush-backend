@@ -1,4 +1,4 @@
-package app.timerush.api;
+package app.timerush.api.service;
 
 import java.time.Instant;
 import java.util.List;
@@ -6,58 +6,32 @@ import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Service;
 
-@RestController
-@RequestMapping("/player")
-public class PlayerController {
-    enum WebSocketAction {
-        UPDATE_PLAYER("updatePlayer");
+import app.timerush.api.dto.PlayerDTO;
+import app.timerush.api.model.Game;
+import app.timerush.api.model.Player;
+import app.timerush.api.repository.GameRepository;
+import app.timerush.api.repository.PlayerRepository;
 
-        private final String stringValue;
-
-        WebSocketAction(String stringValue) {
-            this.stringValue = stringValue;
-        }
-
-        String get() {
-            return this.stringValue;
-        }
-    }
-
+@Service
+public class PlayerService {
     private final PlayerRepository playerRepo;
     private final GameRepository gameRepo;
     private final ModelMapper modelMapper;
-    private final SimpMessagingTemplate template;
 
     @Autowired
-    public PlayerController(PlayerRepository playerRepo, GameRepository gameRepo, ModelMapper modelMapper,
-            SimpMessagingTemplate template) {
+    public PlayerService(PlayerRepository playerRepo, GameRepository gameRepo, ModelMapper modelMapper) {
         this.playerRepo = playerRepo;
         this.gameRepo = gameRepo;
         this.modelMapper = modelMapper;
-        this.template = template;
     }
 
-    @CrossOrigin
-    @GetMapping
-    public List<Player> getAllPlayersByGameId(@RequestParam String gameId) {
+    public List<Player> getAllPlayersByGameId(String gameId) {
         return this.playerRepo.findAllByGameId(gameId);
     }
 
-    @CrossOrigin
-    @GetMapping("/{id}")
-    public Player getPlayerById(@PathVariable("id") String id) {
+    public Player getPlayerById(String id) {
         final Optional<Player> optionalPlayer = this.playerRepo.findById(id);
 
         if (optionalPlayer.isPresent()) {
@@ -67,15 +41,11 @@ public class PlayerController {
         return null;
     }
 
-    @CrossOrigin
-    @PostMapping
-    Player insertPlayer(@RequestBody PlayerDTO playerDTO) {
+    public Player insertPlayer(PlayerDTO playerDTO) {
         final Player player = this.modelMapper.map(playerDTO, Player.class);
 
         player.setCreatedAt(Instant.now());
-        player.setIsConnected(true);
-
-        final List<Player> otherPlayers = this.playerRepo.findAllByGameId(player.getGameId());
+        player.setSessionId(null);
 
         final Optional<Game> optionalGame = this.gameRepo.findById(player.getGameId());
 
@@ -93,23 +63,17 @@ public class PlayerController {
             this.gameRepo.save(game);
         }
 
-        MessageUtils.sendUpdatePlayerMessage(player.getGameId(), this.template);
-
         return newPlayer;
     }
 
-    @CrossOrigin
-    @PutMapping
-    Player updatePlayer(@RequestBody PlayerDTO playerDTO) {
+    public Player updatePlayer(PlayerDTO playerDTO) {
         final Optional<Player> optionalPlayer = this.playerRepo.findById(playerDTO.getId());
 
         if (optionalPlayer.isPresent()) {
             Player player = optionalPlayer.get();
 
-            if (playerDTO.getId() != null) {
-                player.setId(playerDTO.getId());
-            }
-
+            // only allow updating of certain properties e.g. we would never want to
+            // update the player id a new player should be created instead
             if (playerDTO.getName() != null) {
                 player.setName(playerDTO.getName());
             }
@@ -118,25 +82,15 @@ public class PlayerController {
                 player.setColor(playerDTO.getColor());
             }
 
-            if (playerDTO.getGameId() != null) {
-                player.setGameId(playerDTO.getGameId());
-            }
-
             if (playerDTO.getPosition() != null) {
                 player.setPosition(playerDTO.getPosition());
             }
 
-            if (playerDTO.getIsConnected() != null) {
-                player.setIsConnected(playerDTO.getIsConnected());
-            }
-
-            if (playerDTO.getCreatedAt() != null) {
-                player.setCreatedAt(playerDTO.getCreatedAt());
+            if (playerDTO.getSessionId() != null) {
+                player.setSessionId(playerDTO.getSessionId());
             }
 
             this.playerRepo.save(player);
-
-            MessageUtils.sendUpdatePlayerMessage(player.getGameId(), this.template);
 
             return player;
         }
@@ -144,18 +98,16 @@ public class PlayerController {
         return null;
     }
 
-    @CrossOrigin
-    @DeleteMapping("/{id}")
-    Player deletePlayer(@PathVariable("id") String playerId) {
+    public Player deletePlayer(String playerId) {
         Optional<Player> optionalPlayer = this.playerRepo.findById(playerId);
 
         if (optionalPlayer.isEmpty()) {
             return null;
         }
 
-        Player player = optionalPlayer.get();
-
         this.playerRepo.deleteById(playerId);
+
+        Player player = optionalPlayer.get();
 
         Optional<Game> optionalGame = this.gameRepo.findById(player.getGameId());
 
@@ -163,6 +115,8 @@ public class PlayerController {
             return player;
         }
 
+        // if this player was the host of their game, find a new host
+        // if no players are left, set the host to null
         Game game = optionalGame.get();
 
         if (!game.getHostPlayerId().equals(player.getId())) {
@@ -185,9 +139,29 @@ public class PlayerController {
             }
         }
 
-        MessageUtils.sendUpdatePlayerMessage(player.getGameId(), this.template);
-
         return player;
     }
 
+    public Player connectPlayer(String playerId, String sessionId) {
+        final PlayerDTO playerDto = new PlayerDTO();
+
+        playerDto.setId(playerId);
+        playerDto.setSessionId(sessionId);
+
+        return this.updatePlayer(playerDto);
+    }
+
+    public Player disconnectPlayerBySessionId(String sessionId) {
+        final Optional<Player> optionalPlayer = this.playerRepo.findBySessionId(sessionId);
+
+        if (optionalPlayer.isEmpty()) {
+            return null;
+        }
+
+        final Player player = optionalPlayer.get();
+
+        player.setSessionId(null);
+
+        return this.playerRepo.save(player);
+    }
 }
