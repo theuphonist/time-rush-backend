@@ -21,8 +21,6 @@ public class MessageService {
     }
 
     public void sendUpdateMessage(String gameId) {
-        System.out.print("sending message to ");
-        System.out.println("/topic/" + gameId);
         final Message message = new Message();
         message.setAction(WebSocketAction.PLAYERS_OR_GAME_UPDATED);
 

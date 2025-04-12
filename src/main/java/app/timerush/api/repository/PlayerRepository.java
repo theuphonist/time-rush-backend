@@ -17,6 +17,9 @@ public interface PlayerRepository extends MongoRepository<Player, String> {
     @Query("{gameId:'?0'}")
     List<Player> findAllByGameId(String gameId);
 
+    @Query("{gameId:'?0', connected: null}")
+    List<Player> findAllDisconnectedByGameId(String gameId);
+
     @Query("{sessionId:'?0'}")
     Optional<Player> findBySessionId(String sessionId);
 }

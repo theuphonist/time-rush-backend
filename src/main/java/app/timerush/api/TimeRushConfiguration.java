@@ -10,6 +10,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import app.timerush.api.repository.AfterGameSaveListener;
 import app.timerush.api.repository.AfterPlayerSaveListener;
 import app.timerush.api.service.MessageService;
 import app.timerush.api.service.PlayerService;
@@ -27,6 +28,11 @@ public class TimeRushConfiguration implements WebSocketMessageBrokerConfigurer {
     @Bean
     public AfterPlayerSaveListener afterPlayerSaveListener(MessageService messageService, PlayerService playerService) {
         return new AfterPlayerSaveListener(messageService, playerService);
+    }
+
+    @Bean
+    public AfterGameSaveListener afterGameSaveListener(MessageService messageService) {
+        return new AfterGameSaveListener(messageService);
     }
 
     @Override

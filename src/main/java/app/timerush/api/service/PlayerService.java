@@ -1,6 +1,7 @@
 package app.timerush.api.service;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,8 +67,8 @@ public class PlayerService {
         return newPlayer;
     }
 
-    public Player updatePlayer(PlayerDTO playerDTO) {
-        final Optional<Player> optionalPlayer = this.playerRepo.findById(playerDTO.getId());
+    public Player updatePlayer(String playerId, PlayerDTO playerDTO) {
+        final Optional<Player> optionalPlayer = this.playerRepo.findById(playerId);
 
         if (optionalPlayer.isPresent()) {
             Player player = optionalPlayer.get();
@@ -98,6 +99,22 @@ public class PlayerService {
         return null;
     }
 
+    public List<Player> reorderPlayers(String gameId, List<String> playerIds) {
+        final List<Player> players = this.getAllPlayersByGameId(gameId);
+        players.sort((player1, player2) -> Integer.compare(playerIds.indexOf(player1.getId()),
+                playerIds.indexOf(player2.getId())));
+
+        final List<Player> updatedPlayers = new ArrayList<>();
+
+        for (int i = 0; i < players.size(); i++) {
+            PlayerDTO playerDto = new PlayerDTO();
+            playerDto.setPosition(i);
+            updatedPlayers.add(this.updatePlayer(players.get(i).getId(), playerDto));
+        }
+
+        return updatedPlayers;
+    }
+
     public Player deletePlayer(String playerId) {
         Optional<Player> optionalPlayer = this.playerRepo.findById(playerId);
 
@@ -119,36 +136,38 @@ public class PlayerService {
         // if no players are left, set the host to null
         Game game = optionalGame.get();
 
-        if (!game.getHostPlayerId().equals(player.getId())) {
+        if (game.getHostPlayerId().isEmpty() || !game.getHostPlayerId().equals(player.getId())) {
             return player;
         }
 
-        final List<Player> remainingPlayers = this.playerRepo.findAllByGameId(player.getGameId());
+        findNewGameHost(game, player.getId());
 
-        if (remainingPlayers.isEmpty()) {
-            game.setHostPlayerId(null);
-            this.gameRepo.save(game);
-            return player;
-        }
+        return player;
+    }
 
-        for (Player remainingPlayer : remainingPlayers) {
-            if (!remainingPlayer.getId().equals(playerId)) {
-                game.setHostPlayerId(remainingPlayer.getId());
-                this.gameRepo.save(game);
+    public String findNewGameHost(Game game, String originalHostId) {
+        final List<Player> players = this.playerRepo.findAllByGameId(game.getId());
+
+        String newHostId = null;
+
+        for (Player player : players) {
+            if (!player.getId().equals(originalHostId)) {
+                newHostId = player.getId();
                 break;
             }
         }
 
-        return player;
+        game.setHostPlayerId(newHostId);
+        this.gameRepo.save(game);
+        return newHostId;
     }
 
     public Player connectPlayer(String playerId, String sessionId) {
         final PlayerDTO playerDto = new PlayerDTO();
 
-        playerDto.setId(playerId);
         playerDto.setSessionId(sessionId);
 
-        return this.updatePlayer(playerDto);
+        return this.updatePlayer(playerId, playerDto);
     }
 
     public Player disconnectPlayerBySessionId(String sessionId) {
@@ -162,6 +181,22 @@ public class PlayerService {
 
         player.setSessionId(null);
 
-        return this.playerRepo.save(player);
+        final Player updatedPlayer = this.playerRepo.save(player);
+
+        final Optional<Game> optionalGame = this.gameRepo.findById(player.getGameId());
+
+        if (optionalGame.isEmpty()) {
+            return updatedPlayer;
+        }
+
+        final Game game = optionalGame.get();
+
+        if (!game.getHostPlayerId().equals(updatedPlayer.getId())) {
+            return updatedPlayer;
+        }
+
+        this.findNewGameHost(game, updatedPlayer.getId());
+
+        return updatedPlayer;
     }
 }

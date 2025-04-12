@@ -49,8 +49,13 @@ public class PlayerController {
     @CrossOrigin
     @PutMapping("/{id}")
     Player updatePlayer(@PathVariable("id") String playerId, @RequestBody PlayerDTO playerDto) {
-        playerDto.setId(playerId);
-        return this.playerService.updatePlayer(playerDto);
+        return this.playerService.updatePlayer(playerId, playerDto);
+    }
+
+    @CrossOrigin
+    @PutMapping("/reorder/{gameId}")
+    List<Player> reorderPlayers(@PathVariable String gameId, @RequestBody List<String> playerIds) {
+        return this.playerService.reorderPlayers(gameId, playerIds);
     }
 
     @CrossOrigin
