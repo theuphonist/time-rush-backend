@@ -2,8 +2,11 @@ package app.timerush.api.service;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +23,14 @@ public class PlayerService {
     private final PlayerRepository playerRepo;
     private final GameRepository gameRepo;
     private final ModelMapper modelMapper;
+    private final HashMap<String, Timer> deleteDisconnectedPlayerTimers;
 
     @Autowired
     public PlayerService(PlayerRepository playerRepo, GameRepository gameRepo, ModelMapper modelMapper) {
         this.playerRepo = playerRepo;
         this.gameRepo = gameRepo;
         this.modelMapper = modelMapper;
+        this.deleteDisconnectedPlayerTimers = new HashMap<>();
     }
 
     public List<Player> getAllPlayersByGameId(String gameId) {
@@ -136,11 +141,11 @@ public class PlayerService {
         // if no players are left, set the host to null
         Game game = optionalGame.get();
 
-        if (game.getHostPlayerId().isEmpty() || !game.getHostPlayerId().equals(player.getId())) {
+        if (!playerIsHost(player, game)) {
             return player;
         }
 
-        findNewGameHost(game, player.getId());
+        this.findNewGameHost(game, player.getId());
 
         return player;
     }
@@ -162,12 +167,39 @@ public class PlayerService {
         return newHostId;
     }
 
+    private boolean playerIsHost(Player player, Game game) {
+        return !game.getHostPlayerId().isEmpty() && game.getHostPlayerId().equals(player.getId());
+    }
+
     public Player connectPlayer(String playerId, String sessionId) {
         final PlayerDTO playerDto = new PlayerDTO();
 
         playerDto.setSessionId(sessionId);
 
-        return this.updatePlayer(playerId, playerDto);
+        Player updatedPlayer = this.updatePlayer(playerId, playerDto);
+
+        // if the player is scheduled for deletion becuase they disconnected, cancel
+        if (updatedPlayer != null && this.deleteDisconnectedPlayerTimers.containsKey(updatedPlayer.getId())) {
+            this.deleteDisconnectedPlayerTimers.get(updatedPlayer.getId()).cancel();
+        }
+
+        Optional<Game> optionalGame = this.gameRepo.findById(updatedPlayer.getGameId());
+
+        if (optionalGame.isEmpty()) {
+            return updatedPlayer;
+        }
+
+        // if this player was the host of their game, find a new host
+        // if no players are left, set the host to null
+        Game game = optionalGame.get();
+
+        if (!game.getHostPlayerId().isEmpty()) {
+            return updatedPlayer;
+        }
+
+        findNewGameHost(game, null);
+
+        return updatedPlayer;
     }
 
     public Player disconnectPlayerBySessionId(String sessionId) {
@@ -180,6 +212,7 @@ public class PlayerService {
         final Player player = optionalPlayer.get();
 
         player.setSessionId(null);
+        this.scheduleDeletePlayerById(player.getId(), 10000);
 
         final Player updatedPlayer = this.playerRepo.save(player);
 
@@ -198,5 +231,20 @@ public class PlayerService {
         this.findNewGameHost(game, updatedPlayer.getId());
 
         return updatedPlayer;
+    }
+
+    private void scheduleDeletePlayerById(String playerId, Integer delay) {
+        Timer timer = new Timer();
+
+        TimerTask deletePlayerTask = new TimerTask() {
+            @Override
+            public void run() {
+                deletePlayer(playerId);
+            }
+        };
+
+        timer.schedule(deletePlayerTask, delay);
+
+        this.deleteDisconnectedPlayerTimers.put(playerId, timer);
     }
 }
