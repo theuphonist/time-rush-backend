@@ -50,18 +50,29 @@ public class PlayerService {
     public Player insertPlayer(PlayerDTO playerDTO) {
         final Player player = this.modelMapper.map(playerDTO, Player.class);
 
-        player.setCreatedAt(Instant.now());
-        player.setSessionId(null);
-
         final Optional<Game> optionalGame = this.gameRepo.findById(player.getGameId());
 
         if (optionalGame.isEmpty()) {
             return null;
         }
 
-        final Player newPlayer = this.playerRepo.save(player);
-
         final Game game = optionalGame.get();
+
+        final List<Player> existingPlayers = this.getAllPlayersByGameId(game.getId());
+
+        Integer position = 0;
+
+        for (Player existingPlayer : existingPlayers) {
+            if (existingPlayer.getPosition() != null && existingPlayer.getPosition() > position) {
+                position = existingPlayer.getPosition();
+            }
+        }
+
+        player.setCreatedAt(Instant.now());
+        player.setSessionId(null);
+        player.setPosition(position);
+
+        final Player newPlayer = this.playerRepo.save(player);
 
         // make this player the host if there isn't one already
         if (game.getHostPlayerId() == null) {
@@ -106,6 +117,7 @@ public class PlayerService {
 
     public List<Player> reorderPlayers(String gameId, List<String> playerIds) {
         final List<Player> players = this.getAllPlayersByGameId(gameId);
+
         players.sort((player1, player2) -> Integer.compare(playerIds.indexOf(player1.getId()),
                 playerIds.indexOf(player2.getId())));
 
@@ -164,11 +176,13 @@ public class PlayerService {
 
         game.setHostPlayerId(newHostId);
         this.gameRepo.save(game);
+
         return newHostId;
     }
 
     private boolean playerIsHost(Player player, Game game) {
-        return !game.getHostPlayerId().isEmpty() && game.getHostPlayerId().equals(player.getId());
+        return game.getHostPlayerId() != null
+                && game.getHostPlayerId().equals(player.getId());
     }
 
     public Player connectPlayer(String playerId, String sessionId) {
@@ -193,7 +207,7 @@ public class PlayerService {
         // if no players are left, set the host to null
         Game game = optionalGame.get();
 
-        if (!game.getHostPlayerId().isEmpty()) {
+        if (game.getHostPlayerId() != null) {
             return updatedPlayer;
         }
 
@@ -224,7 +238,7 @@ public class PlayerService {
 
         final Game game = optionalGame.get();
 
-        if (!game.getHostPlayerId().equals(updatedPlayer.getId())) {
+        if (game.getHostPlayerId() != null && !game.getHostPlayerId().equals(updatedPlayer.getId())) {
             return updatedPlayer;
         }
 
