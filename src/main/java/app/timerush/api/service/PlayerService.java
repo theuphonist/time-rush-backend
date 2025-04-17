@@ -1,7 +1,6 @@
 package app.timerush.api.service;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -90,7 +89,7 @@ public class PlayerService {
             Player player = optionalPlayer.get();
 
             // only allow updating of certain properties e.g. we would never want to
-            // update the player id a new player should be created instead
+            // update the player id; a new player should be created instead
             if (playerDTO.getName() != null) {
                 player.setName(playerDTO.getName());
             }
@@ -121,15 +120,11 @@ public class PlayerService {
         players.sort((player1, player2) -> Integer.compare(playerIds.indexOf(player1.getId()),
                 playerIds.indexOf(player2.getId())));
 
-        final List<Player> updatedPlayers = new ArrayList<>();
-
         for (int i = 0; i < players.size(); i++) {
-            PlayerDTO playerDto = new PlayerDTO();
-            playerDto.setPosition(i);
-            updatedPlayers.add(this.updatePlayer(players.get(i).getId(), playerDto));
+            players.get(i).setPosition(i);
         }
 
-        return updatedPlayers;
+        return this.playerRepo.saveAll(players);
     }
 
     public Player deletePlayer(String playerId) {
