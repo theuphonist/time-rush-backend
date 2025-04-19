@@ -82,7 +82,7 @@ public class PlayerService {
         return newPlayer;
     }
 
-    public Player updatePlayer(String playerId, PlayerDTO playerDTO) {
+    public Player updatePlayer(String playerId, PlayerDTO playerDto) {
         final Optional<Player> optionalPlayer = this.playerRepo.findById(playerId);
 
         if (optionalPlayer.isPresent()) {
@@ -90,20 +90,20 @@ public class PlayerService {
 
             // only allow updating of certain properties e.g. we would never want to
             // update the player id; a new player should be created instead
-            if (playerDTO.getName() != null) {
-                player.setName(playerDTO.getName());
+            if (playerDto.getName() != null) {
+                player.setName(playerDto.getName());
             }
 
-            if (playerDTO.getColor() != null) {
-                player.setColor(playerDTO.getColor());
+            if (playerDto.getColor() != null) {
+                player.setColor(playerDto.getColor());
             }
 
-            if (playerDTO.getPosition() != null) {
-                player.setPosition(playerDTO.getPosition());
+            if (playerDto.getPosition() != null) {
+                player.setPosition(playerDto.getPosition());
             }
 
-            if (playerDTO.getSessionId() != null) {
-                player.setSessionId(playerDTO.getSessionId());
+            if (playerDto.getSessionId() != null) {
+                player.setSessionId(playerDto.getSessionId());
             }
 
             this.playerRepo.save(player);
@@ -188,7 +188,7 @@ public class PlayerService {
         Player updatedPlayer = this.updatePlayer(playerId, playerDto);
 
         if (updatedPlayer == null) {
-            return updatedPlayer;
+            return null;
         }
 
         // if the player is scheduled for deletion becuase they disconnected, cancel

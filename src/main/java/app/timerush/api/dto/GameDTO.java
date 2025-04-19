@@ -5,7 +5,7 @@ import java.time.Instant;
 public class GameDTO {
     private String id;
     private String name;
-    private int turnLength;
+    private Integer turnLength;
     private String turnLengthUnits;
     private String joinCode;
     private String status;
@@ -20,7 +20,7 @@ public class GameDTO {
         return this.name;
     }
 
-    public int getTurnLength() {
+    public Integer getTurnLength() {
         return this.turnLength;
     }
 
@@ -52,7 +52,7 @@ public class GameDTO {
         this.name = name;
     }
 
-    public void setTurnLength(int turnLength) {
+    public void setTurnLength(Integer turnLength) {
         this.turnLength = turnLength;
     }
 

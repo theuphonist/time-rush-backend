@@ -50,4 +50,44 @@ public class GameService {
 
         return this.gameRepo.save(game);
     }
+
+    public Game updateGame(String gameId, GameDTO gameDto) {
+        final Optional<Game> optionalGame = this.gameRepo.findById(gameId);
+
+        if (optionalGame.isPresent()) {
+            Game game = optionalGame.get();
+
+            // only allow updating of certain properties e.g. we would never want to
+            // update the game id; a new game should be created instead
+            if (gameDto.getName() != null) {
+                game.setName(gameDto.getName());
+            }
+
+            if (gameDto.getTurnLength() != null) {
+                game.setTurnLength(gameDto.getTurnLength());
+            }
+
+            if (gameDto.getTurnLengthUnits() != null) {
+                game.setTurnLengthUnits(gameDto.getTurnLengthUnits());
+            }
+
+            if (gameDto.getJoinCode() != null) {
+                game.setJoinCode(gameDto.getJoinCode());
+            }
+
+            if (gameDto.getStatus() != null) {
+                game.setStatus(gameDto.getStatus());
+            }
+
+            if (gameDto.getHostPlayerId() != null) {
+                game.setHostPlayerId(gameDto.getHostPlayerId());
+            }
+
+            this.gameRepo.save(game);
+
+            return game;
+        }
+
+        return null;
+    }
 }
