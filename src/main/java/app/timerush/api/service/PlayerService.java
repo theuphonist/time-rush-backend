@@ -187,8 +187,12 @@ public class PlayerService {
 
         Player updatedPlayer = this.updatePlayer(playerId, playerDto);
 
+        if (updatedPlayer == null) {
+            return updatedPlayer;
+        }
+
         // if the player is scheduled for deletion becuase they disconnected, cancel
-        if (updatedPlayer != null && this.deleteDisconnectedPlayerTimers.containsKey(updatedPlayer.getId())) {
+        if (this.deleteDisconnectedPlayerTimers.containsKey(updatedPlayer.getId())) {
             this.deleteDisconnectedPlayerTimers.get(updatedPlayer.getId()).cancel();
         }
 
@@ -198,8 +202,7 @@ public class PlayerService {
             return updatedPlayer;
         }
 
-        // if this player was the host of their game, find a new host
-        // if no players are left, set the host to null
+        // if this player is joining a game that doesn't have a host, make them the host
         Game game = optionalGame.get();
 
         if (game.getHostPlayerId() != null) {
@@ -221,7 +224,7 @@ public class PlayerService {
         final Player player = optionalPlayer.get();
 
         player.setSessionId(null);
-        this.scheduleDeletePlayerById(player.getId(), 10000);
+        this.scheduleDeletePlayerById(player.getId(), 60000);
 
         final Player updatedPlayer = this.playerRepo.save(player);
 
