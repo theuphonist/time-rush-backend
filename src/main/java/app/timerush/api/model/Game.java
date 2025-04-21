@@ -10,11 +10,11 @@ public class Game {
     @Id
     private String id;
     private String name;
-    private int turnLength;
-    private String turnLengthUnits;
+    private Integer turnLength;
     private String joinCode;
     private String status;
     private String hostPlayerId;
+    private String activePlayerId;
     private Instant createdAt;
 
     public String getId() {
@@ -25,12 +25,8 @@ public class Game {
         return this.name;
     }
 
-    public int getTurnLength() {
+    public Integer getTurnLength() {
         return this.turnLength;
-    }
-
-    public String getTurnLengthUnits() {
-        return this.turnLengthUnits;
     }
 
     public String getJoinCode() {
@@ -45,6 +41,10 @@ public class Game {
         return hostPlayerId;
     }
 
+    public String getActivePlayerId() {
+        return activePlayerId;
+    }
+
     public Instant getCreatedAt() {
         return this.createdAt;
     }
@@ -57,12 +57,8 @@ public class Game {
         this.name = name;
     }
 
-    public void setTurnLength(int turnLength) {
+    public void setTurnLength(Integer turnLength) {
         this.turnLength = turnLength;
-    }
-
-    public void setTurnLengthUnits(String turnLengthUnits) {
-        this.turnLengthUnits = turnLengthUnits;
     }
 
     public void setJoinCode(String joinCode) {
@@ -75,6 +71,10 @@ public class Game {
 
     public void setHostPlayerId(String hostPlayerId) {
         this.hostPlayerId = hostPlayerId;
+    }
+
+    public void setActivePlayerId(String activePlayerId) {
+        this.activePlayerId = activePlayerId;
     }
 
     public void setCreatedAt(Instant createdAt) {

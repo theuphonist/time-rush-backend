@@ -6,10 +6,10 @@ public class GameDTO {
     private String id;
     private String name;
     private Integer turnLength;
-    private String turnLengthUnits;
     private String joinCode;
     private String status;
     private String hostPlayerId;
+    private String activePlayerId;
     private Instant createdAt;
 
     public String getId() {
@@ -24,10 +24,6 @@ public class GameDTO {
         return this.turnLength;
     }
 
-    public String getTurnLengthUnits() {
-        return this.turnLengthUnits;
-    }
-
     public String getJoinCode() {
         return this.joinCode;
     }
@@ -38,6 +34,10 @@ public class GameDTO {
 
     public String getHostPlayerId() {
         return hostPlayerId;
+    }
+
+    public String getActivePlayerId() {
+        return activePlayerId;
     }
 
     public Instant getCreatedAt() {
@@ -56,10 +56,6 @@ public class GameDTO {
         this.turnLength = turnLength;
     }
 
-    public void setTurnLengthUnits(String turnLengthUnits) {
-        this.turnLengthUnits = turnLengthUnits;
-    }
-
     public void setJoinCode(String joinCode) {
         this.joinCode = joinCode;
     }
@@ -70,6 +66,10 @@ public class GameDTO {
 
     public void setHostPlayerId(String hostPlayerId) {
         this.hostPlayerId = hostPlayerId;
+    }
+
+    public void setActivePlayerId(String activePlayerId) {
+        this.activePlayerId = activePlayerId;
     }
 
     public void setCreatedAt(Instant createdAt) {

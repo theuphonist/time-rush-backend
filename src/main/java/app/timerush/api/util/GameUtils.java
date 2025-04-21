@@ -7,6 +7,9 @@ public class GameUtils {
     private GameUtils() {
     };
 
+    public static final String SECONDS = "s";
+    public static final String MINUTES = "min";
+
     public static String generateJoinCode(int length) {
         String joinCode = "";
 

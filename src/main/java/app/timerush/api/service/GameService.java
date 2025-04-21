@@ -67,10 +67,6 @@ public class GameService {
                 game.setTurnLength(gameDto.getTurnLength());
             }
 
-            if (gameDto.getTurnLengthUnits() != null) {
-                game.setTurnLengthUnits(gameDto.getTurnLengthUnits());
-            }
-
             if (gameDto.getJoinCode() != null) {
                 game.setJoinCode(gameDto.getJoinCode());
             }
@@ -81,6 +77,10 @@ public class GameService {
 
             if (gameDto.getHostPlayerId() != null) {
                 game.setHostPlayerId(gameDto.getHostPlayerId());
+            }
+
+            if (gameDto.getActivePlayerId() != null) {
+                game.setActivePlayerId(gameDto.getActivePlayerId());
             }
 
             this.gameRepo.save(game);
