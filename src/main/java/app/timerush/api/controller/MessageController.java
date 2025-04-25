@@ -5,7 +5,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.lang.NonNull;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
@@ -34,14 +33,13 @@ public class MessageController implements ApplicationListener<SessionDisconnectE
 
     @MessageMapping("/{gameId}")
     public void relayToGameSubscribers(@DestinationVariable String gameId, Message message) throws Exception {
-        this.messageService.relayToGameSubscribers(gameId, message);
+        this.messageService.sendMessage(gameId, message);
     }
 
-    @MessageMapping("/connect")
-    public void connectPlayer(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
-        final String playerId = message.getData().getPlayerId();
+    @MessageMapping("/connect/{playerId}")
+    public void connectPlayer(@DestinationVariable String playerId, SimpMessageHeaderAccessor headerAccessor) {
+        this.messageService.sendMessage(String.format("connect/%s", playerId), null);
         final String sessionId = headerAccessor.getSessionId();
-
         this.playerService.connectPlayer(playerId, sessionId);
     }
 

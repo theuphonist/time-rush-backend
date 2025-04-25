@@ -25,8 +25,13 @@ public class MessageService {
         this.template = template;
     }
 
-    public void relayToGameSubscribers(String gameId, Message message) {
-        this.template.convertAndSend("/topic/" + gameId, message);
+    public void sendMessage(String topic, Message message) {
+        if (message == null) {
+            this.template.convertAndSend("/topic/" + topic, new Message());
+            return;
+        }
+
+        this.template.convertAndSend("/topic/" + topic, message);
     }
 
     public void sendUpdateMessage(String gameId) {
