@@ -163,7 +163,7 @@ public class PlayerService {
         String newHostId = null;
 
         for (Player player : players) {
-            if (!player.getId().equals(originalHostId)) {
+            if (!player.getId().equals(originalHostId) && player.getSessionId() != null) {
                 newHostId = player.getId();
                 break;
             }
