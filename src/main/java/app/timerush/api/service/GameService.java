@@ -75,6 +75,10 @@ public class GameService {
                 game.setStatus(gameDto.getStatus());
             }
 
+            if (gameDto.getPaused() != null) {
+                game.setPaused(gameDto.getPaused());
+            }
+
             if (gameDto.getHostPlayerId() != null) {
                 game.setHostPlayerId(gameDto.getHostPlayerId());
             }

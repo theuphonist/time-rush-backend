@@ -13,6 +13,7 @@ public class Game {
     private Integer turnLength;
     private String joinCode;
     private String status;
+    private Boolean paused;
     private String hostPlayerId;
     private String activePlayerId;
     private Instant createdAt;
@@ -35,6 +36,10 @@ public class Game {
 
     public String getStatus() {
         return status;
+    }
+
+    public Boolean getPaused() {
+        return paused;
     }
 
     public String getHostPlayerId() {
@@ -67,6 +72,10 @@ public class Game {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public void setPaused(Boolean paused) {
+        this.paused = paused;
     }
 
     public void setHostPlayerId(String hostPlayerId) {
